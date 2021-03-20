@@ -10,16 +10,14 @@ if len(sys.argv) < 2:
 else:
     image_file = sys.argv[1]
 
-IMAGE_RATIO = 2
-
-image = Image.open(image_file)
-#image = image.rotate(90)
-
-width, height = image.size
-image = image.rotate(90)
-
-image = image.crop((0, 0, width, width * 2))
-image = image.resize((64, 32))
+# Open and transform image
+img = Image.open(image_file)
+img = img.rotate(90, expand=True)
+w, h = img.size
+x_tr = 65
+img = img.crop((0, x_tr, w, w / 2 + x_tr)) 
+img = img.resize((64, 32))
+img = img.convert('RGB')
 
 # Configuration for the matrix
 options = RGBMatrixOptions()
@@ -29,10 +27,9 @@ options.chain_length = 1
 options.parallel = 1
 options.hardware_mapping = 'adafruit-hat'
 
+# Display image on the matrix
 matrix = RGBMatrix(options = options)
-
-# Make image fit our screen.
-matrix.SetImage(image.convert('RGB'))
+matrix.SetImage(img)
 
 try:
     print("Press CTRL-C to stop.")
